@@ -1,0 +1,15 @@
+Resources:
+    EventBus:
+        Type: AWS::Events::EventBus
+        Properties:
+            Name: CoffeeBus
+
+Outputs:
+    EventBusName:
+        Value: !Ref EventBus
+        Export:
+            Name: CoffeeBusName
+    EventBusArn:
+        Value: !GetAtt EventBus.Arn
+        Export:
+            Name: CoffeeBusArn

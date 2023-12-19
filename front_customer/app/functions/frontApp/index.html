@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Document</title>
+        <script src="https://cdn.tailwindcss.com"></script>
+    </head>
+    <body>
+        <div
+            class="container mx-auto px-4 min-h-screen flex flex-col justify-center items-center"
+        >
+            <p>SLS Coffee</p>
+            <button
+                id="button"
+                class="rounded px-4 py-2 bg-zinc-800 text-zinc-100 w-[200px] mb-2"
+            >
+                Get in line
+            </button>
+
+            <div id="spotresult"></div>
+
+            <button
+                id="button2"
+                class="rounded px-4 py-2 bg-zinc-800 text-zinc-100 w-[200px] mb-2"
+            >
+                Place Order
+            </button>
+
+            <div id="orderresult"></div>
+
+            <div id="signinresult"></div>
+
+            <button
+                id="button4"
+                class="rounded px-4 py-2 bg-zinc-800 text-zinc-100 w-[200px] mb-2"
+            >
+                SigninOut
+            </button>
+
+            <div id="signoutresult"></div>
+        </div>
+        <script>
+            const makeApiCall = async (path, data) =>
+                fetch(path, {
+                    method: 'POST',
+                    mode: 'cors',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        Authorization: `${await window.localStorage.getItem(
+                            'sessionId'
+                        )}`
+                    },
+                    referrerPolicy: 'no-referrer',
+                    body: JSON.stringify(data)
+                })
+
+            const spotresult = document.getElementById('spotresult')
+            const orderresult = document.getElementById('orderresult')
+            const signoutresult = document.getElementById('signoutresult')
+
+            /**
+             * Event Handlers
+             */
+            document
+                .getElementById('button')
+                .addEventListener('click', async () => {
+                    const x = await makeApiCall('/getspotinline', {})
+                    const xx = await x.json()
+                    spotresult.innerHTML = JSON.stringify(xx)
+                })
+
+            document
+                .getElementById('button2')
+                .addEventListener('click', async () => {
+                    const x = await makeApiCall('/makeorder', {
+                        user: 'user_100',
+                        drink: 'drink_100'
+                    })
+                    const xx = await x.json()
+                    orderresult.innerHTML = JSON.stringify(xx)
+                })
+
+            document
+                .getElementById('button4')
+                .addEventListener('click', async () => {
+                    const x = await makeFrontendApiCall('/logout', {
+                        username: 'garysjennings'
+                    })
+                    const xx = await x.json()
+
+                    window.localStorage.clear()
+                    signoutresult.innerHTML = JSON.stringify(xx)
+                })
+        </script>
+    </body>
+</html>
