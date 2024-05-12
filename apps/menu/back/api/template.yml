@@ -2,7 +2,7 @@ Resources:
   ApiRoot:
     Type: AWS::ApiGatewayV2::Api
     Properties:
-      Name: '{name}-{stage}'
+      Name: 'menu-api'
       ProtocolType: HTTP
       CorsConfiguration:
         AllowHeaders:
