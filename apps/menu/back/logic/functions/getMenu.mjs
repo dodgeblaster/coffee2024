@@ -5,7 +5,7 @@ export const handler = async () => {
     statusCode: 200,
     body: JSON.stringify({
       items: []
-    })
+    }),
     headers: {
         'Content-Type': 'application/json',
         'Access-Control-Allow-Headers': 'Content-Type,Authorization',
