@@ -26,16 +26,24 @@ Resources:
   LambdaPermission:
     Type: AWS::Lambda::Permission
     Properties:
-      FunctionName: !GetAtt Function.Arn
       Action: lambda:InvokeFunction
+      FunctionName: !Sub arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:coffee-app-menu-logic-getMenu-
       Principal: apigateway.amazonaws.com
-      SourceArn: !Sub arn:aws:executeapi:${AWS::Region}:${AWS::AccountId}:${ApiRoot}/*
+      SourceArn: !Sub arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${ApiRoot}/*/*/
   Integration:
     Type: AWS::ApiGatewayV2::Integration
     Properties:
       ApiId: !Ref ApiRoot
       IntegrationType: AWS_PROXY
-      IntegrationUri: !GetAtt Function.Arn
+      IntegrationUri: !Join
+      - ''
+      - - 'arn:'
+        - !Ref 'AWS::Partition'
+        - ':apigateway:'
+        - !Ref 'AWS::Region'
+        - ':lambda:path/2015-03-31/functions/'
+        - !Sub arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:coffee-app-menu-logic-getMenu-
+        - /invocations
       PayloadFormatVersion: '2.0'
       TimeoutInMillis: 6500
   Route:
