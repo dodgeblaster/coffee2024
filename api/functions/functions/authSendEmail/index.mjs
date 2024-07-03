@@ -4,10 +4,8 @@ import crypto from 'crypto'
 export const config = {
     url: 'POST /sendLoginEmail',
     env: {
-        DOMAIN: 'https://8tvi0qpja3.execute-api.us-east-1.amazonaws.com',
-        TABLE: '{@output.coffee24-customer-infra.TableName}',
-        PERSONALINFOTABLE:
-            '{@output.coffee24-customer-infra.PersonalInfoTableName}'
+        TABLE: '{@output.coffee-api-infra.TableName}',
+        PERSONALINFOTABLE: '{@output.coffee-api-infra.PersonalInfoTableName}'
     },
     permissions: [
         {
@@ -18,12 +16,12 @@ export const config = {
                 'dynamodb:PutItem',
                 'dynamodb:DeleteItem'
             ],
-            Resource: '{@output.coffee24-customer-infra.TableArn}'
+            Resource: '{@output.coffee-api-infra.TableArn}'
         },
         {
             Effect: 'Allow',
             Action: ['dynamodb:GetItem', 'dynamodb:PutItem'],
-            Resource: '{@output.coffee24-customer-infra.PersonalInfoTableArn}'
+            Resource: '{@output.coffee-api-infra.PersonalInfoTableArn}'
         },
         {
             Effect: 'Allow',
@@ -39,7 +37,7 @@ export const handler = async (e) => {
     /**
      * Make magiclink id
      */
-    const magiclinkId = crypto.randomBytes(16).toString('hex')
+    const magiclinkId = Math.floor(Math.random() * 10000).toString().slice(0,4)
 
     /**
      * Get emails userId
@@ -48,6 +46,7 @@ export const handler = async (e) => {
         pk: data.email,
         sk: 'id'
     })
+
     if (!userId) {
         userId = crypto.randomBytes(16).toString('hex')
         await personalInfoSet({
@@ -71,15 +70,24 @@ export const handler = async (e) => {
     /**
      * Send email
      */
-    const FROM = 'garysjenningsrise@gmail.com'
+    const FROM = 'garysjennings@proton.me'
     const email = await sendEmail({
         to: data.email,
         from: FROM,
         subject: 'Magic Link Test',
         body: `<div>
-            <p>Here is your Magic Link:</p>
-            <a href="${config.env.DOMAIN}/magiclink?token=${magiclinkId}">Magic Link</a>
-        <div>`
+    <p>Here is your Magic Link:</p>
+    <p>${magiclinkId}</p>
+<div>`
     })
-    return { email }
+    return {
+        statusCode: 200,
+        body: JSON.stringify({ email }),
+        headers: {
+            'Content-Type': 'application/json',
+            'Access-Control-Allow-Headers': 'Content-Type',
+            'Access-Control-Allow-Origin': '*',
+            'Access-Control-Allow-Methods': 'POST, OPTION'
+        }
+    }
 }

@@ -2,7 +2,7 @@ Resources:
     Table:
         Type: AWS::DynamoDB::Table
         Properties:
-            TableName: coffee-app-menu-table
+            TableName: coffee-api-table 
             AttributeDefinitions:
                 - AttributeName: pk
                   AttributeType: S
@@ -20,7 +20,7 @@ Resources:
     PersonalInfoTable:
         Type: AWS::DynamoDB::Table
         Properties:
-            TableName: coffee-app-menu-personalinfotable
+            TableName: coffee-api-personalinfotable
             AttributeDefinitions:
                 - AttributeName: pk
                   AttributeType: S
@@ -32,7 +32,10 @@ Resources:
                 - AttributeName: sk
                   KeyType: RANGE
             BillingMode: PAY_PER_REQUEST
-
+    EventBus:
+        Type: AWS::Events::EventBus
+        Properties:
+            Name: CoffeeBus
 Outputs:
     TableName:
         Value: !Ref Table
@@ -42,3 +45,11 @@ Outputs:
         Value: !Ref PersonalInfoTable
     PersonalInfoTableArn:
         Value: !GetAtt PersonalInfoTable.Arn
+    EventBusName:
+        Value: !Ref EventBus
+        Export:
+            Name: CoffeeBusName
+    EventBusArn:
+        Value: !GetAtt EventBus.Arn
+        Export:
+            Name: CoffeeBusArn
