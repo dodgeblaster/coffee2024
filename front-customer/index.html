@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Document</title>
+        <script src="https://cdn.tailwindcss.com"></script>
+    </head>
+    <body>
+        <div
+            class="container mx-auto px-4 min-h-screen flex flex-col justify-center items-center"
+        >
+            <p>Coffee App</p>
+
+            <button
+                id="signinbutton"
+                class="rounded px-4 py-2 bg-zinc-800 text-zinc-100 w-[200px] mb-2"
+            >
+                Signin
+            </button>
+
+            <div id="signinresult"></div>
+        </div>
+        <script>
+            const emailCodeUrl =
+                "https://n6k2emvlxk6agruabldbn62jpu0eoutj.lambda-url.us-east-1.on.aws/"
+
+            const submitCodeUrl =
+                "https://q662w4nmyn6r2dlkau3pa2spcy0occhb.lambda-url.us-east-1.on.aws/"
+
+            const emailCode = async (data) =>
+                fetch(emailCodeUrl, {
+                    method: "POST",
+                    mode: "cors",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify(data),
+                })
+
+            const signinresult = document.getElementById("signinresult")
+
+            const submittCode = async (data) =>
+                fetch(submitCodeUrl, {
+                    method: "POST",
+                    mode: "cors",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify(data),
+                })
+
+            /**
+             * Event Handlers
+             */
+
+            document
+                .getElementById("signinbutton")
+                .addEventListener("click", async () => {
+                    const x = await emailCode({
+                        email: "garysjennings@gmail.com",
+                    })
+                    const xx = await x.json()
+
+                    signinresult.innerHTML = `<div><p>Code sent</p>
+                        <input id='code-input' class='bg-zinc-800 border-none rounded p-4 text-white'></input>
+                        <button id='submitbutton'>Submit</button>
+                    </div>`
+
+                    document
+                        .getElementById("submitbutton")
+                        .addEventListener("click", async () => {
+                            const x = await submittCode({
+                                token: document.getElementById("code-input")
+                                    .value,
+                            })
+                            const xx = await x.json()
+                            debugger
+
+                            window.localStorage.setItem(
+                                "sessionId",
+                                xx.sessionId,
+                            )
+                            setTimeout(() => {
+                                window.location = "/app"
+                            }, 2000)
+                        })
+                })
+        </script>
+    </body>
+</html>
