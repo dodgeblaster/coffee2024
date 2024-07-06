@@ -9,6 +9,9 @@ https://n6k2emvlxk6agruabldbn62jpu0eoutj.lambda-url.us-east-1.on.aws/
 ordersUrl:
 https://lq7afytquo4hl5yssvyksmvdna0cabty.lambda-url.us-east-1.on.aws/
 
+aiURL:
+https://i5zfzrj24ygeqyitktxunoefoa0vajfb.lambda-url.us-east-1.on.aws/
+
 ## Functionality:
 
 ### Orders

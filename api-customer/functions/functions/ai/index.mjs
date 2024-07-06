@@ -1,21 +1,28 @@
-import { get, list } from "./aws.mjs"
+import {invokeConversation, get} from './aws.mjs'
 
 export const config = {
-    url:true,
+    url: true,
+    timeout: 300,
     env: {
         TABLE: "{@output.coffee-api-customer-infra.TableName}",
     },
     permissions: [
         {
+            Effect: 'Allow',
+            Action: ['bedrock:InvokeModel'],
+            Resource: "arn:aws:bedrock:us-east-1::foundation-model/anthropic.claude-3-5-sonnet-20240620-v1:0"
+        },
+        {
             Effect: "Allow",
             Action: ["dynamodb:Query", "dynamodb:GetItem"],
             Resource: "{@output.coffee-api-customer-infra.TableArn}",
         },
-    ],
+    ]
 }
 
+
 export const handler = async (event) => {
-    if (event.requestContext.http.method === "OPTIONS") {
+        if (event.requestContext.http.method === "OPTIONS") {
         return {
             statusCode: 200,
             body: JSON.stringify({ success: true }),
@@ -43,17 +50,14 @@ export const handler = async (event) => {
         }
     }
 
-    const userId = session.userId
+    const messages = JSON.parse(event.body).messages
+    console.log(JSON.stringify(messages, null, 2))
+    const res = await invokeConversation(messages)
 
-    const orders = await list({
-        pk: "user_" + userId,
-        sk: "order_",
-    })
 
-    const xx = orders.sort((a, b) => b.timestamp - a.timestamp).slice(0, 5)
     return {
         statusCode: 200,
-        body: JSON.stringify({orders: xx }),
+        body: JSON.stringify({result: res }),
         headers: {
             "Content-Type": "application/json",
             "Access-Control-Allow-Headers": "Content-Type,Authorization",
@@ -61,5 +65,6 @@ export const handler = async (event) => {
             "Access-Control-Allow-Methods": "POST, OPTION",
         },
     }
-}
 
+
+}
