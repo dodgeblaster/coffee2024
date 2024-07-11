@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>Test</title>
+</head>
+<body>
+<script type="text/javascript">
+	const url = 'https://pqygytvaqvmr4eonao6mdbekne0lperk.lambda-url.us-east-1.on.aws/'
+
+	window.fetch(url, {
+		method: 'POST',
+		body: JSON.stringify({
+			action: 'makeUser',
+			email: 'testin@test.com'
+		}),
+		 mode: "cors",
+        headers: {
+            "Content-Type": "application/json",
+           
+        },
+	})
+	.then(x => x.json())
+	.then(x => {
+		debugger
+	})
+	.catch(e => {
+		debugger
+	})
+</script>
+</body>
+</html>
